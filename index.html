@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posit AI Packages Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #447099;
+    --primary-dark: #2c4f6e;
+    --accent: #72994e;
+    --accent-light: #eaf4e0;
+    --wrong: #c9433e;
+    --wrong-light: #fde8e8;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+  }
+
+  /* ── INTRO SCREEN ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .intro-hero {
+    text-align: center;
+    padding: 48px 20px 32px;
+  }
+
+  .intro-hero .emoji-row {
+    font-size: 48px;
+    margin-bottom: 16px;
+    letter-spacing: 8px;
+  }
+
+  .intro-hero h1 {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+  }
+
+  .intro-hero .subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 99px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 14px rgba(68,112,153,0.35);
+  }
+  .btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(68,112,153,0.4);
+  }
+
+  .btn-outline {
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+  }
+  .btn-outline:hover {
+    background: var(--primary);
+    color: white;
+  }
+
+  .btn-share {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 14px rgba(114,153,78,0.35);
+  }
+  .btn-share:hover {
+    background: #5f8340;
+    transform: translateY(-1px);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 8px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .question-counter {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.35s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 18px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .option-btn:hover:not(.disabled) {
+    border-color: var(--primary);
+    background: #f0f4f8;
+  }
+
+  .option-btn .letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: white;
+    border: 2px solid var(--border);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .option-btn:hover:not(.disabled) .letter {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .option-btn.correct {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .option-btn.correct .letter {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-light);
+  }
+  .option-btn.wrong .letter {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    color: white;
+  }
+
+  .option-btn.disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .option-btn.correct.disabled,
+  .option-btn.wrong.disabled { opacity: 1; }
+
+  .explanation {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: #f0f7ff;
+    border-left: 4px solid var(--primary);
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    color: var(--primary-dark);
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .next-btn-wrap {
+    text-align: center;
+    margin-top: 20px;
+    animation: fadeUp 0.3s ease 0.15s both;
+  }
+
+  .auto-timer {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 18px;
+  }
+
+  .auto-timer-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 99px;
+    animation: timerShrink linear forwards;
+    width: 100%;
+  }
+
+  @keyframes timerShrink {
+    from { width: 100%; }
+    to { width: 0%; }
+  }
+
+  /* ── RESULTS SCREEN ── */
+  .results-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px 32px;
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .score-ring-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 24px;
+  }
+
+  .score-ring-wrap svg {
+    transform: rotate(-90deg);
+  }
+
+  .score-ring-bg {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 10;
+  }
+
+  .score-ring-fill {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s ease;
+  }
+
+  .score-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--primary-dark);
+  }
+
+  .score-number span {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .results-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .results-desc {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-bottom: 28px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .results-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .share-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .share-toast.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .read-cta {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f4f8, #e8f0e4);
+    border-radius: var(--radius);
+    text-align: center;
+  }
+
+  .read-cta p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .read-cta a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .read-cta a:hover { text-decoration: underline; }
+
+  /* ── BREAKDOWN ── */
+  .breakdown {
+    margin-top: 28px;
+    text-align: left;
+  }
+
+  .breakdown h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+  }
+
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .breakdown-item:last-child { border-bottom: none; }
+
+  .breakdown-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .breakdown-icon.ok {
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .breakdown-icon.fail {
+    background: var(--wrong-light);
+    color: var(--wrong);
+  }
+
+  .breakdown-q {
+    flex: 1;
+    color: var(--text-muted);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .container { padding: 16px 12px 32px; }
+    .question-card { padding: 24px 18px; }
+    .results-card { padding: 28px 18px; }
+    .intro-hero h1 { font-size: 24px; }
+    .results-actions { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ── INTRO ── -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-hero">
+      <div class="emoji-row">🧠📦🤖</div>
+      <h1>How Well Do You Know<br>Posit's AI Packages?</h1>
+      <p class="subtitle">10 questions on ellmer, chatlas, shinychat, querychat, ragnar &amp; friends. Test yourself before (or after!) reading the guide.</p>
+      <button class="btn btn-primary" onclick="startQuiz()">Start the Quiz &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="screen" id="screen-quiz">
+    <div class="question-counter" id="q-counter"></div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <div id="question-area"></div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="screen" id="screen-results">
+    <div class="results-card" id="results-card"></div>
+  </div>
+
+</div>
+
+<div class="share-toast" id="toast">Link copied!</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "Which package is the Python equivalent of ellmer for interacting with LLMs?",
+    options: ["shinychat", "chatlas", "mall", "querychat"],
+    answer: 1,
+    explanation: "chatlas is the Python counterpart to ellmer. Both provide a unified interface to multiple LLM providers, with tool calling and structured data extraction."
+  },
+  {
+    q: "What does ellmer provide for R developers?",
+    options: [
+      "A ggplot2 theme engine",
+      "A unified interface to multiple LLM providers",
+      "A database migration tool",
+      "A Shiny deployment platform"
+    ],
+    answer: 1,
+    explanation: "ellmer provides a unified interface to LLMs across providers like OpenAI, Anthropic, Google Gemini, Azure, AWS Bedrock, and Ollama \u2014 all through stateful chat objects."
+  },
+  {
+    q: "What does querychat translate natural language into?",
+    options: ["R code", "Python code", "SQL queries", "API calls"],
+    answer: 2,
+    explanation: "querychat converts natural language questions into SQL queries, executes them against a local DuckDB instance, and returns results with visible SQL for verification."
+  },
+  {
+    q: "What does querychat send to the LLM to protect your data?",
+    options: [
+      "An anonymized sample of rows",
+      "Only schema metadata \u2014 never raw data",
+      "A hash of the full dataset",
+      "An encrypted data blob"
+    ],
+    answer: 1,
+    explanation: "querychat never sends raw data to the LLM. It only shares schema metadata (column names, types), so your actual data stays local."
+  },
+  {
+    q: "Which package implements RAG (Retrieval-Augmented Generation) pipelines in R?",
+    options: ["btw", "ragnar", "mcptools", "vitals"],
+    answer: 1,
+    explanation: "ragnar handles the full RAG pipeline: document ingestion, text chunking, embedding generation, DuckDB storage, and retrieval \u2014 grounding LLM responses in your own content."
+  },
+  {
+    q: "What is vitals used for?",
+    options: [
+      "Health-check monitoring of Shiny apps",
+      "Evaluating LLM app performance (accuracy, cost, latency)",
+      "Managing API keys and secrets",
+      "Logging HTTP requests"
+    ],
+    answer: 1,
+    explanation: "vitals is an evaluation framework for ellmer-based LLM apps. It measures accuracy, cost, and latency across labeled datasets \u2014 the closest thing to automated QA for your LLM apps."
+  },
+  {
+    q: "Which package gives you a ready-made chat UI component for Shiny apps?",
+    options: ["querychat", "ellmer", "shinychat", "btw"],
+    answer: 2,
+    explanation: "shinychat provides a drop-in chat interface component for Shiny, with streaming responses, tool-call displays, and bookmarking. Available for both R and Python."
+  },
+  {
+    q: "What protocol does mcptools implement?",
+    options: [
+      "Model Context Protocol (MCP)",
+      "Message Passing Interface (MPI)",
+      "Multi-Channel Pipeline (MCP)",
+      "Managed Cloud Protocol (MCP)"
+    ],
+    answer: 0,
+    explanation: "mcptools implements the Model Context Protocol \u2014 an open standard for LLM-to-tool communication. It can act as both an MCP server and client, connecting ellmer to external tools."
+  },
+  {
+    q: "Which package runs batch NLP tasks (sentiment, classification, summarization) over data frame columns?",
+    options: ["ragnar", "chores", "mall", "gander"],
+    answer: 2,
+    explanation: "mall runs batch NLP operations over data frame columns \u2014 great for data labeling and enrichment at scale. Available for both R and Python."
+  },
+  {
+    q: "In ellmer/chatlas, what is 'tool calling'?",
+    options: [
+      "A CLI utility for running scripts",
+      "The LLM's ability to invoke registered functions mid-conversation",
+      "A method for calling REST APIs",
+      "An RPC framework for microservices"
+    ],
+    answer: 1,
+    explanation: "Tool calling lets you register R or Python functions that the LLM can invoke during a conversation \u2014 giving it the ability to fetch data, run computations, or trigger actions on demand."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answers = [];
+let autoTimer = null; // 0 = wrong, 1 = correct
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  current = 0;
+  score = 0;
+  answers = [];
+  show('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('q-counter').textContent = `Question ${current + 1} of ${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = `${((current) / QUESTIONS.length) * 100}%`;
+
+  let html = `<div class="question-card"><h2>${q.q}</h2><div class="options-list">`;
+  q.options.forEach((opt, i) => {
+    html += `<button class="option-btn" data-idx="${i}" onclick="selectAnswer(${i})">
+      <span class="letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>`;
+  });
+  html += `</div><div id="feedback-area"></div></div>`;
+  document.getElementById('question-area').innerHTML = html;
+}
+
+function selectAnswer(idx) {
+  const q = QUESTIONS[current];
+  const btns = document.querySelectorAll('.option-btn');
+  const isCorrect = idx === q.answer;
+
+  if (isCorrect) { score++; answers.push(1); }
+  else { answers.push(0); }
+
+  btns.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    btn.onclick = null;
+    if (i === q.answer) btn.classList.add('correct');
+    if (i === idx && !isCorrect) btn.classList.add('wrong');
+  });
+
+  const delay = isCorrect ? 1200 : 2000;
+  let fb = `<div class="explanation">${isCorrect ? '✓ Correct!' : '✗ Not quite.'} ${q.explanation}</div>`;
+  fb += `<div class="next-btn-wrap"><div class="auto-timer"><div class="auto-timer-fill" style="animation-duration:${delay}ms"></div></div></div>`;
+  document.getElementById('feedback-area').innerHTML = fb;
+
+  document.getElementById('progress-fill').style.width = `${((current + 1) / QUESTIONS.length) * 100}%`;
+
+  autoTimer = setTimeout(() => nextQuestion(), delay);
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= QUESTIONS.length) { showResults(); return; }
+  renderQuestion();
+}
+
+function getTitle(pct) {
+  if (pct === 100) return { title: "Perfect Score!", desc: "You know the Posit AI stack inside and out." };
+  if (pct >= 80) return { title: "AI Package Pro!", desc: "Impressive knowledge \u2014 you clearly know your way around the ecosystem." };
+  if (pct >= 60) return { title: "Solid Foundation", desc: "You've got a good grasp, but there's more to discover." };
+  if (pct >= 40) return { title: "Getting There", desc: "You know the basics \u2014 the full guide will fill in the gaps." };
+  return { title: "Fresh Explorer", desc: "Looks like there's a lot to learn \u2014 the guide below is a great next step!" };
+}
+
+function showResults() {
+  show('screen-results');
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  const { title, desc } = getTitle(pct);
+
+  const circ = 2 * Math.PI * 65;
+  const offset = circ - (circ * pct / 100);
+
+  let breakdownHtml = '';
+  QUESTIONS.forEach((q, i) => {
+    const ok = answers[i] === 1;
+    breakdownHtml += `<div class="breakdown-item">
+      <div class="breakdown-icon ${ok ? 'ok' : 'fail'}">${ok ? '✓' : '✗'}</div>
+      <div class="breakdown-q">${q.q.length > 70 ? q.q.slice(0, 67) + '...' : q.q}</div>
+    </div>`;
+  });
+
+  document.getElementById('results-card').innerHTML = `
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="score-ring-bg" cx="80" cy="80" r="65"/>
+        <circle class="score-ring-fill" cx="80" cy="80" r="65"
+          stroke-dasharray="${circ}"
+          stroke-dashoffset="${circ}"
+          id="ring-anim"/>
+      </svg>
+      <div class="score-number">${score}<span>/${QUESTIONS.length}</span></div>
+    </div>
+    <div class="results-title">${title}</div>
+    <p class="results-desc">${desc}</p>
+    <div class="results-actions">
+      <button class="btn btn-share" onclick="shareResult()">Share My Score</button>
+      <button class="btn btn-outline" onclick="startQuiz()">Retake Quiz</button>
+    </div>
+    <div class="read-cta">
+      <p>Want the full picture? Read the deep-dive guide:</p>
+      <a href="https://www.appsilon.com/post/posits-ai-packages-explained-a-decision-map-for-r-and-python-developers" target="_blank" rel="noopener">
+        Posit's AI Packages Explained &rarr;
+      </a>
+    </div>
+    <div class="breakdown">
+      <h3>Your Answers</h3>
+      ${breakdownHtml}
+    </div>
+  `;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.getElementById('ring-anim').style.strokeDashoffset = offset;
+    });
+  });
+
+  // Update URL for sharing
+  const params = new URLSearchParams();
+  params.set('s', score);
+  params.set('a', answers.join(''));
+  const newUrl = window.location.pathname + '?' + params.toString();
+  window.history.replaceState({}, '', newUrl);
+}
+
+function shareResult() {
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  const url = window.location.href;
+
+  // Try Web Share API first (mobile-friendly)
+  if (navigator.share) {
+    navigator.share({
+      title: 'Posit AI Packages Quiz',
+      text: `I scored ${score}/${QUESTIONS.length} (${pct}%) on the Posit AI Packages Quiz! Can you beat me?`,
+      url: url
+    }).catch(() => {});
+    return;
+  }
+
+  // Fallback: copy link
+  const text = `I scored ${score}/${QUESTIONS.length} (${pct}%) on the Posit AI Packages Quiz! Can you beat me? ${url}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('toast');
+    toast.textContent = 'Result copied to clipboard!';
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2500);
+  });
+}
+
+// Handle shared links: if URL has ?s= param, show results directly
+function checkSharedResult() {
+  const params = new URLSearchParams(window.location.search);
+  const s = params.get('s');
+  const a = params.get('a');
+  if (s !== null && a) {
+    score = parseInt(s, 10);
+    answers = a.split('').map(Number);
+    current = QUESTIONS.length;
+    showResults();
+  }
+}
+
+checkSharedResult();
+</script>
+</body>
+</html>
