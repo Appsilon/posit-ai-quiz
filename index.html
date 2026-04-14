@@ -5,28 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Posit AI Packages Quiz</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700;800&family=Titillium+Web:wght@400;600;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --primary: #447099;
-    --primary-dark: #2c4f6e;
-    --accent: #72994e;
-    --accent-light: #eaf4e0;
-    --wrong: #c9433e;
-    --wrong-light: #fde8e8;
-    --bg: #f7f8fa;
+    --primary: #0099F9;
+    --primary-dark: #007AC7;
+    --primary-hover: #008DE7;
+    --accent: #4FAE6F;
+    --accent-light: #EDF7F1;
+    --wrong: #FF3658;
+    --wrong-light: #FFD7DB;
+    --bg: #F8FCFF;
     --card: #ffffff;
-    --text: #1a1a2e;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
+    --text: #162A3D;
+    --text-muted: #455564;
+    --border: #D0D4D8;
+    --navy: #0D222F;
     --radius: 12px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.06);
+    --shadow: 0 4px 24px rgba(0,14,35,0.08);
   }
 
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Maven Pro', 'Titillium Web', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -59,7 +61,7 @@
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 8px;
-    color: var(--primary-dark);
+    color: var(--navy);
   }
 
   .intro-hero .subtitle {
@@ -88,12 +90,12 @@
   .btn-primary {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 14px rgba(68,112,153,0.35);
+    box-shadow: 0 4px 14px rgba(0,153,249,0.35);
   }
   .btn-primary:hover {
     background: var(--primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(68,112,153,0.4);
+    box-shadow: 0 6px 20px rgba(0,153,249,0.4);
   }
 
   .btn-outline {
@@ -109,10 +111,10 @@
   .btn-share {
     background: var(--accent);
     color: white;
-    box-shadow: 0 4px 14px rgba(114,153,78,0.35);
+    box-shadow: 0 4px 14px rgba(79,174,111,0.35);
   }
   .btn-share:hover {
-    background: #5f8340;
+    background: #349657;
     transform: translateY(-1px);
   }
 
@@ -127,7 +129,7 @@
 
   .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    background: linear-gradient(90deg, var(--primary), #2EAEFF);
     border-radius: 99px;
     transition: width 0.4s ease;
     width: 0%;
@@ -190,7 +192,7 @@
 
   .option-btn:hover:not(.disabled) {
     border-color: var(--primary);
-    background: #f0f4f8;
+    background: #E5F5FF;
   }
 
   .option-btn .letter {
@@ -244,11 +246,11 @@
   .explanation {
     margin-top: 16px;
     padding: 14px 18px;
-    background: #f0f7ff;
+    background: #E5F5FF;
     border-left: 4px solid var(--primary);
     border-radius: 0 8px 8px 0;
     font-size: 14px;
-    color: var(--primary-dark);
+    color: var(--navy);
     line-height: 1.5;
     animation: fadeUp 0.3s ease;
   }
@@ -269,7 +271,7 @@
 
   .auto-timer-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    background: linear-gradient(90deg, var(--primary), #2EAEFF);
     border-radius: 99px;
     animation: timerShrink linear forwards;
     width: 100%;
@@ -379,7 +381,7 @@
   .read-cta {
     margin-top: 20px;
     padding: 20px;
-    background: linear-gradient(135deg, #f0f4f8, #e8f0e4);
+    background: linear-gradient(135deg, #E5F5FF, #EDF7F1);
     border-radius: var(--radius);
     text-align: center;
   }
